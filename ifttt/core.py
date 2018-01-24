@@ -37,6 +37,7 @@ from .triggers import (ArticleOfTheDay,
                        Politics,
                        Events,
                        Sports,
+                       TestTrendingTopics,
                        CategoryMemberRevisions)
 
 import logging
@@ -60,6 +61,7 @@ ALL_TRIGGERS = [ArticleOfTheDay,
                 Politics,
                 Events,
                 Sports,
+                TestTrendingTopics,
                 CategoryMemberRevisions]
 
 app = flask.Flask(__name__)

@@ -349,6 +349,11 @@ class TrendingTopics(BaseTriggerView):
                  'timestamp': iso8601_to_epoch(updated)},
         }
 
+class TestTrendingTopics(TrendingTopics):
+    path = '/api/trending/enwiki/2'
+    def only_trending(self, page):
+        return page['edits'] > 5 and page['editors'] > 1 and page['score'] > 0
+
 class Sports(TrendingTopics):
     def check_tags(self, page):
         return 'sports' in page['tags']
