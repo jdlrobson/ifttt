@@ -307,6 +307,7 @@ class TrendingTopics(BaseTriggerView):
 
     url = 'https://wikipedia-trending.wmflabs.org'
     default_fields = {}
+    path = '/api/trending/enwiki/24'
 
     def query(self, path):
         url = '%s%s' % (self.url, path)
@@ -317,11 +318,14 @@ class TrendingTopics(BaseTriggerView):
         return resp
 
     def get_data(self):
-        resp = self.query('/api/trending/enwiki/24')
+        resp = self.query(self.path)
         return filter(self.only_trending, map(self.parse_result, resp['pages']))
 
+    def check_tags(self, page):
+        return True
+
     def only_trending(self, page):
-        return page['edits'] > 10 and page['editors'] > 4 and page['score'] > 0
+        return page['edits'] > 10 and page['editors'] > 4 and page['score'] > 0 and self.check_tags(page)
 
     def parse_result(self, page):
         url = "https://en.wikipedia.org/wiki/%s"%page['title'].replace(' ', '_')
@@ -344,6 +348,22 @@ class TrendingTopics(BaseTriggerView):
             'meta': {'id': url_to_uuid5(url),
                  'timestamp': iso8601_to_epoch(updated)},
         }
+
+class Sports(TrendingTopics):
+    def check_tags(self, page):
+        return 'sports' in page['tags']
+
+class Politics(TrendingTopics):
+    def check_tags(self, page):
+        return 'politics' in page['tags']
+
+class Events(TrendingTopics):
+    def check_tags(self, page):
+        return 'event' in page['tags']
+
+class Deaths(TrendingTopics):
+    def check_tags(self, page):
+        return 'death' in page['tags']
 
 class NewArticle(BaseAPIQueryTriggerView):
     """Trigger for each new article."""
