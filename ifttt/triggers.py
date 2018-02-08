@@ -328,7 +328,7 @@ class TrendingTopics(BaseTriggerView):
         return page['edits'] > 10 and page['editors'] > 4 and page['score'] > 0 and self.check_tags(page)
 
     def parse_result(self, page):
-        url = "https://en.wikipedia.org/wiki/%s"%page['title'].replace(' ', '_')
+        url = "https://en.wikipedia.org/wiki/%s?referrer=ifttt-trending"%page['title'].replace(' ', '_')
         updated = page['updated'][0:19] + 'Z'
         try:
             thumbUrl = page['thumbnail']['source']
