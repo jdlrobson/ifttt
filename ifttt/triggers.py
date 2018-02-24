@@ -1,3 +1,5 @@
+
+
 # -*- coding: utf-8 -*-
 """
   Wikipedia channel for IFTTT
@@ -155,16 +157,15 @@ class BaseTriggerView(flask.views.MethodView):
         self.limit = self.params.get('limit', DEFAULT_RESP_LIMIT)
         trigger_identity = self.params.get('trigger_identity')
         trigger_values = self.params.get('triggerFields', {})
+        for field, value in trigger_values.items():
+            self.fields[field] = value
         for field, default_value in self.default_fields.items():
-            self.fields[field] = trigger_values.get(field)
-            if not self.fields[field]  and default_value not in TEST_FIELDS:
-                # TODO: Clean up
-                self.fields[field] = default_value
-            if not self.fields[field]:
-                if field in self.optional_fields and self.fields[field] is not None:
-                    self.fields[field] = ''
-                else:
-                    flask.abort(400)
+            if field not in self.fields and field in self.optional_fields:
+                if field not in TEST_FIELDS:
+                    self.fields[field] = default_value
+            elif field not in self.fields:
+                flask.abort(400)
+
         logging.info('%s: %s' % (self.__class__.__name__, trigger_identity))
         data = self.get_data()
         data = data[:self.limit]
